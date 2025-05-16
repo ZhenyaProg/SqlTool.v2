@@ -4,17 +4,18 @@ namespace SQLTool.v2
 {
     public class SourcesWrapper
     {
-        public StringBuilder FromSB { get; init; } = new StringBuilder("FROM ");
-        public StringBuilder JoinsSB { get; init; } = new StringBuilder();
+        private List<string> _fromSources = [];
+        private List<string> _joinsSources = [];
+        
+        public void AddFromSource(string source) => _fromSources.Add(source);
+        public void AddInnerJoinSource(string source) => _joinsSources.Add(source);
 
         public override string ToString()
         {
-            if (FromSB[FromSB.Length - 2] == ',')
-                FromSB.Length = FromSB.Length - 2;
-            if(JoinsSB.Length > 0)
-                return $"{FromSB}{Environment.NewLine}{JoinsSB}";
-            else
-                return $"{FromSB}";
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"FROM {String.Join(", ", _fromSources)}{Environment.NewLine}");
+            sb.Append($"{String.Join(Environment.NewLine, _joinsSources)}{Environment.NewLine}");
+            return sb.ToString();
         }
     }
 }

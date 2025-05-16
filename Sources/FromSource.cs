@@ -13,7 +13,7 @@
 
         public override void AppendSource(SourcesWrapper wrapper)
         {
-            wrapper.FromSB.Append($"{_source}, ");
+            wrapper.AddFromSource(_source);
         }
     }
 }

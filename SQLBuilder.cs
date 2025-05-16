@@ -20,18 +20,18 @@ namespace SQLTool.v2
             return selectBuilder;
         }
 
-        public InsertBuilder Insert(string table, Action<InsertBuilder> into)
+        public InsertBuilder Insert(string table, Action<ColumnsBuilder> into)
         {
-            var insertBuilder = InsertBuilder.Empty(table);
-            into(insertBuilder);
-            return insertBuilder;
+            ColumnsBuilder columnsBuilder = ColumnsBuilder.Empty();
+            into(columnsBuilder);
+            return InsertBuilder.Empty(table, columnsBuilder);
         }
 
-        public UpdateBuilder Update(string table, Action<UpdateBuilder> updated)
+        public UpdateBuilder Update(string table, Action<ColumnsBuilder> updated)
         {
-            var updateBuilder = UpdateBuilder.Empty(table);
-            updated(updateBuilder);
-            return updateBuilder;
+            ColumnsBuilder columnsBuilder = ColumnsBuilder.Empty();
+            updated(columnsBuilder);
+            return UpdateBuilder.Empty(table, columnsBuilder);
         }
 
         public DeleteBuilder Delete(string from)

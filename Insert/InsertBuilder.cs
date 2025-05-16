@@ -3,25 +3,20 @@
 public class InsertBuilder
 {
     private readonly string _table;
-    private readonly List<string> _columns = [];
-    private readonly List<object> _values = [];
+    private readonly ColumnsBuilder _columnsBuilder;
         
-    private InsertBuilder(string table)
+    private InsertBuilder(string table, ColumnsBuilder columnsBuilder)
     {
         _table = table;
+        _columnsBuilder = columnsBuilder;
     }
         
-    public static InsertBuilder Empty(string table) => new(table);
-
-    public InsertBuilder InColumn(string columnName, object values)
-    {
-        _columns.Add(columnName);
-        _values.Add(values);
-        return this;
-    }
-        
+    public static InsertBuilder Empty(string table, ColumnsBuilder columnsBuilder) => new(table, columnsBuilder);
+    
     public string Build()
     {
-        return $"INSERT INTO {_table}({String.Join(", ", _columns)}) VALUES ({String.Join(", ", _values)})";
+        string columns = String.Join(", ", _columnsBuilder.Columns.Select(column => column.Item1));
+        string values = String.Join(", ", _columnsBuilder.Columns.Select(column => column.Item2));
+        return $"INSERT INTO {_table}({columns}) VALUES ({String.Join(", ", values)})";
     }
 }

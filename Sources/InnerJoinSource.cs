@@ -16,9 +16,9 @@
         public override void AppendSource(SourcesWrapper wrapper)
         {
             if(_condition is not null)
-                wrapper.JoinsSB.AppendLine($"INNER JOIN {_source} ON {_condition}");
+                wrapper.AddInnerJoinSource($"INNER JOIN {_source} ON {_condition}");
             else
-                wrapper.JoinsSB.AppendLine($"INNER JOIN {_source}");
+                wrapper.AddInnerJoinSource($"INNER JOIN {_source}");
         }
     }
 }

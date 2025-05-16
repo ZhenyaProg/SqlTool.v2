@@ -21,11 +21,11 @@ namespace SQLTool.v2.Select
 
         public void Distinct() => _distinct = true;
 
-        public SelectBuilder WithColumns(Func<SourceBuilder, AbstractSource> action, params string[] names)
+        public SelectBuilder WithColumns(Func<SourceBuilder, AbstractSource> action, params AbstractColumn[] names)
         {
             _columns.Add(new ColumnGroup
             {
-                Names = names,
+                Columns = names,
                 Source = action(SourceBuilder.Empty())
             });
             return this;
@@ -39,8 +39,7 @@ namespace SQLTool.v2.Select
 
         public SelectBuilder GroupBy(params string[] grouped)
         {
-            _forGroup.Append("GROUP BY ");
-            _forGroup.Append(String.Join(", ", grouped));
+            _forGroup.Append($"GROUP BY {String.Join(", ", grouped)}{Environment.NewLine}");
             return this;
         }
 
@@ -64,11 +63,11 @@ namespace SQLTool.v2.Select
             var sb = new StringBuilder();
             for(var i = 0; i < _columns.Count; i++)
             {
-                sb.Append(String.Join(", ", _columns[i].Names.Select(name => $"{ _columns[i].Source.ForSelect}.{name}")));
+                sb.Append(String.Join(", ", _columns[i].Columns.Select(column => column.GetColumn(_columns[i].Source.ForSelect))));
                 if (i != _columns.Count - 1)
                     sb.Append(", ");
             }
-            return $"SELECT {(_distinct ? "DISTINCT " : "")}{sb}";
+            return $"SELECT {(_distinct ? "DISTINCT " : "")}{sb}{Environment.NewLine}";
         }
 
         private string BuildSource()
@@ -82,12 +81,9 @@ namespace SQLTool.v2.Select
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(BuildSelect());
-            sb.Append(Environment.NewLine);
             sb.Append(BuildSource());
             sb.Append(_whereBuilder);
-            sb.Append(Environment.NewLine);
             sb.Append(_forGroup.ToString());
-            sb.Append(Environment.NewLine);
             sb.Append(_forOrder.ToString());
             return sb.ToString();
         }
@@ -120,6 +116,7 @@ namespace SQLTool.v2.Select
         public override string ToString()
         {
             _sb.Append(_conditionWithJoinBuilder);
+            _sb.Append(Environment.NewLine);
             return _sb.ToString();
         }
 
